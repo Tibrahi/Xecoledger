@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xecoledger - Business Intelligence</title>
+    <meta name="theme-color" content="#10b981">
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --green: #10b981; --blue: #3b82f6; --red: #ef4444; }
+        .bg-green { background-color: var(--green); }
+        .text-green { color: var(--green); }
+        .text-red { color: var(--red); }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-green text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Xecoledger</h1>
+            <div class="flex gap-2">
+                <button id="backupBtn" class="bg-white text-green px-3 py-1 rounded">📥 Backup</button>
+                <button id="restoreBtn" class="bg-white text-green px-3 py-1 rounded">📤 Restore</button>
+            </div>
+        </div>
+    </header>
+
+    <nav class="bg-white shadow sticky top-0">
+        <div class="container mx-auto flex overflow-x-auto">
+            <button class="nav-btn px-4 py-3 text-green border-b-2 border-green" data-tab="dashboard">📊 Dashboard</button>
+            <button class="nav-btn px-4 py-3 text-gray-600 hover:text-green" data-tab="inventory">📦 Inventory</button>
+            <button class="nav-btn px-4 py-3 text-gray-600 hover:text-green" data-tab="sales">💰 Sales</button>
+            <button class="nav-btn px-4 py-3 text-gray-600 hover:text-green" data-tab="khatabook">📒 Khatabook</button>
+            <button class="nav-btn px-4 py-3 text-gray-600 hover:text-green" data-tab="analytics">📈 Analytics</button>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-4">
+        <!-- Dashboard -->
+        <div id="dashboard" class="tab-content">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white p-6 rounded shadow">
+                    <p class="text-gray-500 text-sm">Today's Sales</p>
+                    <p class="text-2xl font-bold text-green" id="todaySales">$0</p>
+                </div>
+                <div class="bg-white p-6 rounded shadow">
+                    <p class="text-gray-500 text-sm">Total Products</p>
+                    <p class="text-2xl font-bold text-blue" id="totalProducts">0</p>
+                </div>
+                <div class="bg-white p-6 rounded shadow">
+                    <p class="text-gray-500 text-sm">Pending Debt</p>
+                    <p class="text-2xl font-bold text-red" id="pendingDebt">$0</p>
+                </div>
+                <div class="bg-white p-6 rounded shadow">
+                    <p class="text-gray-500 text-sm">Low Stock Items</p>
+                    <p class="text-2xl font-bold text-red" id="lowStockCount">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory -->
+        <div id="inventory" class="tab-content hidden">
+            <div class="bg-white rounded shadow mb-4">
+                <div class="p-4 border-b flex justify-between">
+                    <h2 class="text-xl font-bold">Products</h2>
+                    <button id="addProductBtn" class="bg-green text-white px-4 py-2 rounded">+ Add Product</button>
+                </div>
+                <div class="p-4">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="text-left py-2">Name</th>
+                                <th class="text-left py-2">Stock</th>
+                                <th class="text-left py-2">Price</th>
+                                <th class="text-left py-2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableBody">
+                            <tr><td colspan="4" class="text-center py-8 text-gray-500">No products yet</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales -->
+        <div id="sales" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div class="lg:col-span-2 bg-white rounded shadow">
+                    <div class="p-4 border-b">
+                        <h2 class="text-xl font-bold">New Sale</h2>
+                    </div>
+                    <div class="p-4">
+                        <div id="cartItems" class="mb-4">
+                            <p class="text-gray-500 text-center py-8">Cart empty</p>
+                        </div>
+                        <div class="border-t pt-4">
+                            <div class="flex justify-between mb-4">
+                                <span class="font-bold">Total:</span>
+                                <span class="text-2xl font-bold text-green" id="cartTotal">$0</span>
+                            </div>
+                            <button id="completeSaleBtn" class="w-full bg-green text-white py-2 rounded font-bold">
+                                Complete Sale
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded shadow">
+                    <div class="p-4 border-b">
+                        <h2 class="text-xl font-bold">Products</h2>
+                    </div>
+                    <div class="p-4">
+                        <div id="saleProductList" class="space-y-2">
+                            <p class="text-gray-500 text-center py-8">No products</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Khatabook -->
+        <div id="khatabook" class="tab-content hidden">
+            <div class="bg-white rounded shadow">
+                <div class="p-4 border-b flex justify-between">
+                    <h2 class="text-xl font-bold">Customers</h2>
+                    <button id="addCustomerBtn" class="bg-green text-white px-4 py-2 rounded">+ Add Customer</button>
+                </div>
+                <div class="p-4">
+                    <div id="customerList">
+                        <p class="text-gray-500 text-center py-8">No customers yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics -->
+        <div id="analytics" class="tab-content hidden">
+            <div class="bg-white rounded shadow">
+                <div class="p-4 border-b">
+                    <h2 class="text-xl font-bold">Analytics</h2>
+                </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="text-center">
+                            <p class="text-gray-500">Cash in Hand</p>
+                            <p class="text-2xl font-bold text-green" id="cashInHand">$0</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-gray-500">Pending Debt</p>
+                            <p class="text-2xl font-bold text-red" id="pendingDebtAnalytics">$0</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-gray-500">Total Revenue</p>
+                            <p class="text-2xl font-bold text-blue" id="totalRevenue">$0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-xl font-bold mb-4">Add Product</h3>
+            <form id="productForm">
+                <input type="text" id="productName" placeholder="Product Name" class="w-full p-2 border rounded mb-2" required>
+                <input type="text" id="productCategory" placeholder="Category" class="w-full p-2 border rounded mb-2" required>
+                <input type="number" id="productQuantity" placeholder="Quantity" class="w-full p-2 border rounded mb-2" required>
+                <input type="number" id="productCost" placeholder="Cost Price" step="0.01" class="w-full p-2 border rounded mb-2" required>
+                <input type="number" id="productPrice" placeholder="Selling Price" step="0.01" class="w-full p-2 border rounded mb-2" required>
+                <input type="number" id="productMinStock" placeholder="Min Stock" class="w-full p-2 border rounded mb-2" required>
+                <div class="flex gap-2">
+                    <button type="submit" class="flex-1 bg-green text-white py-2 rounded">Save</button>
+                    <button type="button" id="cancelProductBtn" class="flex-1 bg-gray-300 py-2 rounded">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="customerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-xl font-bold mb-4">Add Customer</h3>
+            <form id="customerForm">
+                <input type="text" id="customerName" placeholder="Customer Name" class="w-full p-2 border rounded mb-2" required>
+                <input type="tel" id="customerPhone" placeholder="Phone Number" class="w-full p-2 border rounded mb-2" required>
+                <div class="flex gap-2">
+                    <button type="submit" class="flex-1 bg-green text-white py-2 rounded">Save</button>
+                    <button type="button" id="cancelCustomerBtn" class="flex-1 bg-gray-300 py-2 rounded">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
