@@ -1,4 +1,4 @@
-// Xecoledger - Enhanced Business Intelligence Engine
+// Xecoledger - Business Intelligence Engine
 class XecoledgerDB {
     constructor() {
         this.dbName = 'XecoledgerDB';
@@ -112,12 +112,10 @@ class XecoledgerDB {
             
             let transactionId = null;
 
-            // Step 1: Add main transaction record
             const addTxnReq = transactionStore.add(transactionData);
             addTxnReq.onsuccess = () => {
                 transactionId = addTxnReq.result;
 
-                // Step 2: Validate and update product stock items
                 const checkAndDeductStock = transactionData.items.map(item => {
                     return new Promise((res, rej) => {
                         const prodReq = productStore.get(item.productId);
@@ -137,7 +135,6 @@ class XecoledgerDB {
                 });
 
                 Promise.all(checkAndDeductStock).then(() => {
-                    // Step 3: Handle customer debt allocation
                     if (transactionData.paymentMethod === 'credit' && transactionData.customerPhone) {
                         const custReq = customerStore.get(transactionData.customerPhone);
                         custReq.onsuccess = () => {
@@ -284,7 +281,7 @@ class XecoledgerApp {
             this.setupRealTimeUpdates();
             this.loadDashboard();
             this.updateConnectionStatus();
-            this.showToast('Welcome to Xecoledger! 🚀', 'success');
+            this.showToast('Welcome to Xecoledger!', 'success');
         } catch (error) {
             console.error('Failed to initialize Xecoledger:', error);
             this.showToast('Failed to initialize database.', 'error');
@@ -320,7 +317,7 @@ class XecoledgerApp {
         
         if (!toast) return;
         toastMessage.textContent = message;
-        toastIcon.textContent = type === 'success' ? '✅' : '❌';
+        toastIcon.textContent = type === 'success' ? '⬛' : '◼️';
         
         toast.classList.remove('hidden');
         setTimeout(() => toast.classList.add('hidden'), 3000);
@@ -457,8 +454,8 @@ class XecoledgerApp {
         container.innerHTML = transactions.map(t => `
             <div class="flex justify-between items-center p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-emerald-500/30 transition-all">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center text-emerald-400 font-bold">
-                        ${this.getPaymentIcon(t.paymentMethod)}
+                    <div class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center font-bold">
+                        🖤
                     </div>
                     <div>
                         <p class="font-medium text-slate-200">${t.type || 'Sale'} #${t.id}</p>
@@ -473,11 +470,6 @@ class XecoledgerApp {
         `).join('');
     }
 
-    getPaymentIcon(method) {
-        const icons = { cash: '💵', mobile: '📱', credit: '💳' };
-        return icons[method] || '💰';
-    }
-
     async loadProducts() {
         try {
             const products = await this.db.getAllProducts();
@@ -486,7 +478,7 @@ class XecoledgerApp {
             
             if (products.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="7" class="text-center py-12 text-slate-400">
-                    <div class="text-4xl mb-2">📦</div>
+                    <div class="text-4xl mb-2">⬛</div>
                     <p class="font-medium">No products in inventory</p>
                 </td></tr>`;
                 return;
@@ -512,9 +504,9 @@ class XecoledgerApp {
                         <td class="py-3 px-4 text-slate-200">$${totalValue.toFixed(2)}</td>
                         <td class="py-3 px-4">
                             <div class="flex space-x-2">
-                                <button onclick="app.editProduct(${product.id})" class="p-1 hover:text-emerald-400" title="Edit">✏️</button>
-                                <button onclick="app.quickStockUpdate(${product.id})" class="p-1 hover:text-blue-400" title="Update Stock">📦</button>
-                                <button onclick="app.deleteProduct(${product.id})" class="p-1 hover:text-rose-400" title="Delete">🗑️</button>
+                                <button onclick="app.editProduct(${product.id})" class="p-1 hover:text-slate-100" title="Edit">🖤</button>
+                                <button onclick="app.quickStockUpdate(${product.id})" class="p-1 hover:text-slate-100" title="Update Stock">⬛</button>
+                                <button onclick="app.deleteProduct(${product.id})" class="p-1 hover:text-rose-400" title="Delete">◼️</button>
                             </div>
                         </td>
                     </tr>
@@ -647,14 +639,14 @@ class XecoledgerApp {
                         </div>
                         <div class="text-right">
                             <p class="font-bold text-emerald-400">$${product.sellingPrice.toFixed(2)}</p>
-                            <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded">+ Add</span>
+                            <span class="text-xs bg-slate-900 text-slate-200 px-2 py-0.5 rounded">⚫ Add</span>
                         </div>
                     </div>
                 `).join('');
             }
 
             const customerSelect = document.getElementById('customerSelect');
-            customerSelect.innerHTML = '<option value="">🚶 Walk-in Customer</option>' +
+            customerSelect.innerHTML = '<option value="">⚫ Walk-in Customer</option>' +
                 customers.map(c => `<option value="${c.phone}">${c.name} (${c.phone})</option>`).join('');
         } catch (error) {
             console.error('Error loading sales panel:', error);
@@ -716,7 +708,7 @@ class XecoledgerApp {
                     <button onclick="app.updateCartQty(${idx}, -1)" class="w-6 h-6 bg-slate-700 rounded text-slate-200">-</button>
                     <span class="text-slate-200 font-medium">${item.quantity}</span>
                     <button onclick="app.updateCartQty(${idx}, 1)" class="w-6 h-6 bg-slate-700 rounded text-slate-200">+</button>
-                    <button onclick="app.removeFromCart(${idx})" class="text-rose-400 hover:text-rose-300 ml-2">🗑️</button>
+                    <button onclick="app.removeFromCart(${idx})" class="text-slate-400 hover:text-rose-400 ml-2">◼️</button>
                 </div>
             </div>
         `).join('');

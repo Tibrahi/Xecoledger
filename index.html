@@ -22,24 +22,24 @@
     <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="w-9 h-9 bg-emerald-500 rounded-lg flex items-center justify-center font-bold text-slate-900 text-xl">X</div>
+                <div class="w-9 h-9 bg-slate-950 border border-slate-700 rounded-lg flex items-center justify-center font-bold text-slate-100 text-xl">🖤</div>
                 <span class="font-bold text-lg tracking-wide">Xecoledger</span>
             </div>
             <div class="flex items-center space-x-3">
                 <span id="connectionStatus" class="text-xs text-slate-400 flex items-center"></span>
-                <button id="backupBtn" class="btn btn-secondary text-xs">📥 Export Backup</button>
-                <button id="restoreBtn" class="btn btn-secondary text-xs">📤 Restore</button>
+                <button id="backupBtn" class="btn btn-secondary text-xs">⬛ Export Backup</button>
+                <button id="restoreBtn" class="btn btn-secondary text-xs">◼️ Restore</button>
             </div>
         </div>
     </header>
 
     <nav class="bg-slate-900/80 border-b border-slate-800">
         <div class="container mx-auto px-4 flex space-x-2 overflow-x-auto py-2">
-            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all active-nav" data-tab="dashboard">📊 Dashboard</button>
-            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400" data-tab="inventory">📦 Inventory</button>
-            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400" data-tab="sales">💰 Sales Engine</button>
-            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400" data-tab="khatabook">📒 Credit Ledger</button>
-            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400" data-tab="analytics">📈 Analytics</button>
+            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all active-nav" data-tab="dashboard">🖤 Dashboard</button>
+            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400" data-tab="inventory">⬛ Inventory</button>
+            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400" data-tab="sales">◼️ Sales Engine</button>
+            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400" data-tab="khatabook">⚫ Credit Ledger</button>
+            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400" data-tab="analytics">🖤 Analytics</button>
         </div>
     </nav>
 
@@ -75,7 +75,7 @@
         <div id="inventory" class="tab-content hidden space-y-6">
             <div class="card p-6">
                 <div class="flex flex-col md:flex-row justify-between gap-4 mb-6">
-                    <input type="text" id="productSearch" placeholder="🔍 Search catalog..." class="input-field md:w-64">
+                    <input type="text" id="productSearch" placeholder="⬛ Search catalog..." class="input-field md:w-64">
                     <div class="flex gap-2">
                         <select id="categoryFilter" class="input-field"><option value="">All Categories</option></select>
                         <select id="stockFilter" class="input-field">
@@ -119,9 +119,9 @@
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <select id="paymentMethod" class="input-field">
-                            <option value="cash">💵 Cash</option>
-                            <option value="mobile">📱 Mobile Money</option>
-                            <option value="credit">💳 Credit Ledger</option>
+                            <option value="cash">🖤 Cash</option>
+                            <option value="mobile">⬛ Mobile Money</option>
+                            <option value="credit">◼️ Credit Ledger</option>
                         </select>
                         <select id="customerSelect" class="input-field"></select>
                     </div>
@@ -132,7 +132,7 @@
                 </div>
             </div>
             <div class="card p-6">
-                <input type="text" id="saleProductSearch" placeholder="🔍 Find item..." class="input-field mb-4">
+                <input type="text" id="saleProductSearch" placeholder="⬛ Find item..." class="input-field mb-4">
                 <div id="saleProductList" class="space-y-2 max-h-96 overflow-y-auto"></div>
             </div>
         </div>
@@ -227,7 +227,7 @@
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-4 right-4 hidden bg-slate-800 border border-emerald-500/50 p-4 rounded-xl shadow-xl z-50 flex items-center space-x-2">
+    <div id="toast" class="fixed bottom-4 right-4 hidden bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-xl z-50 flex items-center space-x-2">
         <span id="toastIcon"></span>
         <span id="toastMessage" class="text-sm font-medium"></span>
     </div>
