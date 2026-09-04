@@ -1,735 +1,235 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xecoledger - Business Intelligence</title>
-    <meta name="theme-color" content="#10b981">
-    <link rel="manifest" href="manifest.json">
+    <title>Xecoledger | Professional Business Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root { 
-            --green: #10b981; 
-            --blue: #3b82f6; 
-            --red: #ef4444; 
-            --white: #ffffff;
-            --gray: #6b7280;
-            --light-gray: #f3f4f6;
-        }
-        
-        .bg-green { background-color: var(--green); }
-        .text-green { color: var(--green); }
-        .text-blue { color: var(--blue); }
-        .text-red { color: var(--red); }
-        .border-green { border-color: var(--green); }
-        .border-blue { border-color: var(--blue); }
-        .border-red { border-color: var(--red); }
-        .hidden { display: none; }
-        
-        .fade-in {
-            animation: fadeIn 0.3s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        .card {
-            background: var(--white);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            transition: all 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        
-        .btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: none;
-        }
-        
-        .btn-primary {
-            background-color: var(--green);
-            color: var(--white);
-        }
-        
-        .btn-primary:hover {
-            background-color: #059669;
-            transform: translateY(-1px);
-        }
-        
-        .btn-secondary {
-            background-color: var(--gray);
-            color: var(--white);
-        }
-        
-        .input-field {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.2s ease;
-        }
-        
-        .input-field:focus {
-            outline: none;
-            border-color: var(--green);
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-        }
-        
-        .low-stock {
-            background-color: #fef2f2;
-            border-left: 4px solid var(--red);
-        }
-        
-        .success-toast {
-            background-color: var(--green);
-            color: var(--white);
-            padding: 12px 20px;
-            border-radius: 8px;
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
-        }
-        
-        .modal-overlay {
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 16px;
-            }
-        }
+        body { background-color: #0f172a; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+        .active-nav { background-color: rgba(16, 185, 129, 0.15); border-color: #10b981; color: #10b981; }
+        .card { background-color: #1e293b; border: 1px solid rgba(51, 65, 85, 0.6); border-radius: 12px; }
+        .input-field { background-color: #0f172a; border: 1px solid #334155; color: #f8fafc; border-radius: 8px; padding: 10px 14px; width: 100%; outline: none; }
+        .input-field:focus { border-color: #10b981; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2); }
+        .btn { padding: 8px 16px; border-radius: 8px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; }
+        .btn-primary { background-color: #10b981; color: #ffffff; }
+        .btn-primary:hover { background-color: #059669; }
+        .btn-secondary { background-color: #334155; color: #f8fafc; }
+        .btn-secondary:hover { background-color: #475569; }
     </style>
 </head>
-<body class="bg-gray-50">
-    <header class="bg-green text-white shadow-lg">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                        <span class="text-green font-bold text-xl">X</span>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-bold">Xecoledger</h1>
-                        <p class="text-xs opacity-90">Business Intelligence</p>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <div class="hidden md:flex items-center space-x-2 text-sm">
-                        <span id="connectionStatus" class="flex items-center">
-                            <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
-                            Online
-                        </span>
-                    </div>
-                    <button id="backupBtn" class="btn bg-white text-green hover:bg-gray-100">
-                        📥 Backup
-                    </button>
-                    <button id="restoreBtn" class="btn bg-white text-green hover:bg-gray-100">
-                        📤 Restore
-                    </button>
-                    <button id="settingsBtn" class="btn bg-white text-green hover:bg-gray-100">
-                        ⚙️
-                    </button>
-                </div>
+<body class="min-h-screen flex flex-col">
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 bg-emerald-500 rounded-lg flex items-center justify-center font-bold text-slate-900 text-xl">X</div>
+                <span class="font-bold text-lg tracking-wide">Xecoledger</span>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span id="connectionStatus" class="text-xs text-slate-400 flex items-center"></span>
+                <button id="backupBtn" class="btn btn-secondary text-xs">📥 Export Backup</button>
+                <button id="restoreBtn" class="btn btn-secondary text-xs">📤 Restore</button>
             </div>
         </div>
     </header>
 
-    <nav class="bg-white shadow-md sticky top-0 z-40">
-        <div class="container mx-auto px-4">
-            <div class="flex space-x-1 overflow-x-auto">
-                <button class="nav-btn px-4 py-3 text-green border-b-2 border-green font-medium transition-colors" data-tab="dashboard">
-                    📊 Dashboard
-                </button>
-                <button class="nav-btn px-4 py-3 text-gray-600 hover:text-green border-b-2 border-transparent hover:border-green transition-colors" data-tab="inventory">
-                    📦 Inventory
-                </button>
-                <button class="nav-btn px-4 py-3 text-gray-600 hover:text-green border-b-2 border-transparent hover:border-green transition-colors" data-tab="sales">
-                    💰 Sales
-                </button>
-                <button class="nav-btn px-4 py-3 text-gray-600 hover:text-green border-b-2 border-transparent hover:border-green transition-colors" data-tab="khatabook">
-                    📒 Khatabook
-                </button>
-                <button class="nav-btn px-4 py-3 text-gray-600 hover:text-green border-b-2 border-transparent hover:border-green transition-colors" data-tab="analytics">
-                    📈 Analytics
-                </button>
-            </div>
+    <nav class="bg-slate-900/80 border-b border-slate-800">
+        <div class="container mx-auto px-4 flex space-x-2 overflow-x-auto py-2">
+            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all active-nav" data-tab="dashboard">📊 Dashboard</button>
+            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400" data-tab="inventory">📦 Inventory</button>
+            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400" data-tab="sales">💰 Sales Engine</button>
+            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400" data-tab="khatabook">📒 Credit Ledger</button>
+            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400" data-tab="analytics">📈 Analytics</button>
         </div>
     </nav>
 
-    <main class="container mx-auto p-4">
+    <main class="container mx-auto px-4 py-6 flex-grow">
         <!-- Dashboard -->
-        <div id="dashboard" class="tab-content fade-in">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <div class="card p-6">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                            <span class="text-2xl">💵</span>
-                        </div>
-                        <span class="text-xs text-gray-500">Today</span>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-1">Today's Sales</p>
-                    <p class="text-3xl font-bold text-green" id="todaySales">$0</p>
-                    <p class="text-xs text-gray-500 mt-2">+0% from yesterday</p>
+        <div id="dashboard" class="tab-content space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="card p-5">
+                    <p class="text-xs text-slate-400 font-medium">TODAY'S REVENUE</p>
+                    <p id="todaySales" class="text-2xl font-bold text-emerald-400 mt-1">$0.00</p>
                 </div>
-                <div class="card p-6">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <span class="text-2xl">📦</span>
-                        </div>
-                        <span class="text-xs text-gray-500">Total</span>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-1">Products</p>
-                    <p class="text-3xl font-bold text-blue" id="totalProducts">0</p>
-                    <p class="text-xs text-gray-500 mt-2">In inventory</p>
+                <div class="card p-5">
+                    <p class="text-xs text-slate-400 font-medium">TOTAL PRODUCTS</p>
+                    <p id="totalProducts" class="text-2xl font-bold text-slate-200 mt-1">0</p>
                 </div>
-                <div class="card p-6">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                            <span class="text-2xl">⏰</span>
-                        </div>
-                        <span class="text-xs text-gray-500">Pending</span>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-1">Pending Debt</p>
-                    <p class="text-3xl font-bold text-red" id="pendingDebt">$0</p>
-                    <p class="text-xs text-gray-500 mt-2">From customers</p>
+                <div class="card p-5">
+                    <p class="text-xs text-slate-400 font-medium">OUTSTANDING DEBT</p>
+                    <p id="pendingDebt" class="text-2xl font-bold text-rose-400 mt-1">$0.00</p>
                 </div>
-                <div class="card p-6">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                            <span class="text-2xl">⚠️</span>
-                        </div>
-                        <span class="text-xs text-red-500">Alert</span>
-                    </div>
-                    <p class="text-gray-600 text-sm mb-1">Low Stock</p>
-                    <p class="text-3xl font-bold text-red" id="lowStockCount">0</p>
-                    <p class="text-xs text-gray-500 mt-2">Items need restock</p>
+                <div class="card p-5">
+                    <p class="text-xs text-slate-400 font-medium">LOW STOCK ALERTS</p>
+                    <p id="lowStockCount" class="text-2xl font-bold text-amber-400 mt-1">0</p>
                 </div>
             </div>
 
-            <!-- Quick Actions -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <button onclick="app.switchTab('sales')" class="card p-6 text-left hover:bg-green-50 transition-colors">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="font-bold text-lg mb-2">Quick Sale</h3>
-                            <p class="text-gray-600 text-sm">Process a new transaction</p>
-                        </div>
-                        <span class="text-3xl">💰</span>
-                    </div>
-                </button>
-                <button onclick="app.switchTab('inventory'); app.showProductModal()" class="card p-6 text-left hover:bg-blue-50 transition-colors">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="font-bold text-lg mb-2">Add Product</h3>
-                            <p class="text-gray-600 text-sm">Add new inventory item</p>
-                        </div>
-                        <span class="text-3xl">📦</span>
-                    </div>
-                </button>
-                <button onclick="app.switchTab('khatabook'); app.showCustomerModal()" class="card p-6 text-left hover:bg-purple-50 transition-colors">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="font-bold text-lg mb-2">Add Customer</h3>
-                            <p class="text-gray-600 text-sm">Register new customer</p>
-                        </div>
-                        <span class="text-3xl">👤</span>
-                    </div>
-                </button>
-            </div>
-
-            <!-- Recent Transactions -->
-            <div class="card">
-                <div class="p-6 border-b border-gray-200">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-xl font-bold">Recent Transactions</h2>
-                        <button onclick="app.switchTab('analytics')" class="text-green hover:underline text-sm">View All</button>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div id="recentTransactions" class="space-y-3">
-                        <p class="text-gray-500 text-center py-8">No transactions yet</p>
-                    </div>
-                </div>
+            <div class="card p-6">
+                <h2 class="text-lg font-bold text-slate-200 mb-4">Recent Transactions</h2>
+                <div id="recentTransactions" class="space-y-3"></div>
             </div>
         </div>
 
         <!-- Inventory -->
-        <div id="inventory" class="tab-content hidden fade-in">
-            <div class="card mb-6">
-                <div class="p-6 border-b border-gray-200">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div>
-                            <h2 class="text-xl font-bold mb-2">Product Inventory</h2>
-                            <p class="text-gray-600 text-sm">Manage your stock and track inventory levels</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button id="exportInventoryBtn" class="btn btn-secondary">
-                                📊 Export
-                            </button>
-                            <button id="addProductBtn" class="btn btn-primary">
-                                + Add Product
-                            </button>
-                        </div>
+        <div id="inventory" class="tab-content hidden space-y-6">
+            <div class="card p-6">
+                <div class="flex flex-col md:flex-row justify-between gap-4 mb-6">
+                    <input type="text" id="productSearch" placeholder="🔍 Search catalog..." class="input-field md:w-64">
+                    <div class="flex gap-2">
+                        <select id="categoryFilter" class="input-field"><option value="">All Categories</option></select>
+                        <select id="stockFilter" class="input-field">
+                            <option value="">All Stock</option>
+                            <option value="low">Low Stock</option>
+                            <option value="available">In Stock</option>
+                        </select>
+                        <button id="addProductBtn" class="btn btn-primary">+ Add Product</button>
                     </div>
                 </div>
-                <div class="p-6">
-                    <div class="mb-6">
-                        <div class="flex flex-col sm:flex-row gap-4">
-                            <input type="text" id="productSearch" placeholder="🔍 Search products..." 
-                                   class="input-field flex-1">
-                            <select id="categoryFilter" class="input-field sm:w-48">
-                                <option value="">All Categories</option>
-                            </select>
-                            <select id="stockFilter" class="input-field sm:w-48">
-                                <option value="">All Stock</option>
-                                <option value="low">Low Stock</option>
-                                <option value="out">Out of Stock</option>
-                                <option value="available">Available</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead>
-                                <tr class="border-b border-gray-200">
-                                    <th class="text-left py-3 px-2 font-medium text-gray-700">Product</th>
-                                    <th class="text-left py-3 px-2 font-medium text-gray-700">Category</th>
-                                    <th class="text-left py-3 px-2 font-medium text-gray-700">Stock</th>
-                                    <th class="text-left py-3 px-2 font-medium text-gray-700">Cost Price</th>
-                                    <th class="text-left py-3 px-2 font-medium text-gray-700">Selling Price</th>
-                                    <th class="text-left py-3 px-2 font-medium text-gray-700">Value</th>
-                                    <th class="text-left py-3 px-2 font-medium text-gray-700">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productTableBody">
-                                <tr>
-                                    <td colspan="7" class="text-center py-12 text-gray-500">
-                                        <div class="mb-4">
-                                            <span class="text-4xl">📦</span>
-                                        </div>
-                                        <p class="font-medium mb-2">No products added yet</p>
-                                        <p class="text-sm">Start by adding your first product to the inventory</p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-900/50 text-slate-400 border-b border-slate-700">
+                            <tr>
+                                <th class="p-3">Name</th>
+                                <th class="p-3">Category</th>
+                                <th class="p-3">Quantity</th>
+                                <th class="p-3">Cost Price</th>
+                                <th class="p-3">Selling Price</th>
+                                <th class="p-3">Valuation</th>
+                                <th class="p-3">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableBody"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
         <!-- Sales -->
-        <div id="sales" class="tab-content hidden fade-in">
-            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                <!-- Cart Section -->
-                <div class="xl:col-span-2">
-                    <div class="card">
-                        <div class="p-6 border-b border-gray-200">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h2 class="text-xl font-bold mb-1">Shopping Cart</h2>
-                                    <p class="text-gray-600 text-sm">Add items and complete the sale</p>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="bg-green-100 text-green px-3 py-1 rounded-full text-sm font-medium" id="cartCount">0 items</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <div id="cartItems" class="space-y-3 mb-6 min-h-[200px]">
-                                <div class="text-center py-12 text-gray-500">
-                                    <span class="text-4xl mb-4 block">🛒</span>
-                                    <p class="font-medium mb-2">Your cart is empty</p>
-                                    <p class="text-sm">Add products from the right panel to get started</p>
-                                </div>
-                            </div>
-                            <div class="border-t border-gray-200 pt-6">
-                                <div class="space-y-4">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-600">Subtotal:</span>
-                                        <span class="font-medium" id="cartSubtotal">$0.00</span>
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-600">Tax (0%):</span>
-                                        <span class="font-medium" id="cartTax">$0.00</span>
-                                    </div>
-                                    <div class="flex justify-between items-center text-lg font-bold">
-                                        <span>Total:</span>
-                                        <span class="text-green" id="cartTotal">$0.00</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-                                    <select id="paymentMethod" class="input-field">
-                                        <option value="cash">💵 Cash</option>
-                                        <option value="mobile">📱 Mobile Money</option>
-                                        <option value="credit">💳 Credit</option>
-                                    </select>
-                                    <select id="customerSelect" class="input-field">
-                                        <option value="">🚶 Walk-in Customer</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="flex gap-3 mt-6">
-                                    <button id="clearCartBtn" class="btn btn-secondary flex-1">
-                                        Clear Cart
-                                    </button>
-                                    <button id="completeSaleBtn" class="btn btn-primary flex-1">
-                                        ✅ Complete Sale
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+        <div id="sales" class="tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 card p-6 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-200 mb-4">Active Cart (<span id="cartCount">0 items</span>)</h2>
+                    <div id="cartItems" class="space-y-3 max-h-80 overflow-y-auto mb-6"></div>
+                </div>
+                <div class="border-t border-slate-700/50 pt-4 space-y-4">
+                    <div class="flex justify-between items-center text-lg font-bold">
+                        <span>Total Payable:</span>
+                        <span id="cartTotal" class="text-emerald-400">$0.00</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <select id="paymentMethod" class="input-field">
+                            <option value="cash">💵 Cash</option>
+                            <option value="mobile">📱 Mobile Money</option>
+                            <option value="credit">💳 Credit Ledger</option>
+                        </select>
+                        <select id="customerSelect" class="input-field"></select>
+                    </div>
+                    <div class="flex gap-3">
+                        <button id="clearCartBtn" class="btn btn-secondary flex-1">Clear Cart</button>
+                        <button id="completeSaleBtn" class="btn btn-primary flex-1">Process Sale</button>
                     </div>
                 </div>
-
-                <!-- Product Selection -->
-                <div class="xl:col-span-1">
-                    <div class="card">
-                        <div class="p-6 border-b border-gray-200">
-                            <h2 class="text-xl font-bold mb-1">Available Products</h2>
-                            <p class="text-gray-600 text-sm">Click to add to cart</p>
-                        </div>
-                        <div class="p-6">
-                            <input type="text" id="saleProductSearch" placeholder="🔍 Search products..." 
-                                   class="input-field mb-4">
-                            <div id="saleProductList" class="space-y-2 max-h-96 overflow-y-auto">
-                                <div class="text-center py-8 text-gray-500">
-                                    <span class="text-3xl mb-2 block">📦</span>
-                                    <p class="text-sm">No products available</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            </div>
+            <div class="card p-6">
+                <input type="text" id="saleProductSearch" placeholder="🔍 Find item..." class="input-field mb-4">
+                <div id="saleProductList" class="space-y-2 max-h-96 overflow-y-auto"></div>
             </div>
         </div>
 
         <!-- Khatabook -->
-        <div id="khatabook" class="tab-content hidden fade-in">
-            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                <!-- Customer List -->
-                <div class="xl:col-span-2">
-                    <div class="card">
-                        <div class="p-6 border-b border-gray-200">
-                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                                <div>
-                                    <h2 class="text-xl font-bold mb-2">Customer Ledger</h2>
-                                    <p class="text-gray-600 text-sm">Manage customer accounts and track credit</p>
-                                </div>
-                                <div class="flex gap-2">
-                                    <button id="exportCustomersBtn" class="btn btn-secondary">
-                                        📊 Export
-                                    </button>
-                                    <button id="addCustomerBtn" class="btn btn-primary">
-                                        + Add Customer
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-6">
-                            <div class="mb-6">
-                                <input type="text" id="customerSearch" placeholder="🔍 Search customers..." 
-                                       class="input-field">
-                            </div>
-                            <div id="customerList" class="space-y-3">
-                                <div class="text-center py-12 text-gray-500">
-                                    <span class="text-4xl mb-4 block">👥</span>
-                                    <p class="font-medium mb-2">No customers yet</p>
-                                    <p class="text-sm">Add your first customer to start tracking credit</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <div id="khatabook" class="tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 card p-6">
+                <div class="flex justify-between mb-4">
+                    <input type="text" id="customerSearch" placeholder="Search accounts..." class="input-field w-64">
+                    <button id="addCustomerBtn" class="btn btn-primary">+ Add Customer</button>
                 </div>
-
-                <!-- Customer Details -->
-                <div class="xl:col-span-1">
-                    <div class="card">
-                        <div class="p-6 border-b border-gray-200">
-                            <h2 class="text-xl font-bold mb-1">Customer Details</h2>
-                            <p class="text-gray-600 text-sm">Select a customer to view</p>
-                        </div>
-                        <div class="p-6">
-                            <div id="customerDetails" class="text-center py-12 text-gray-500">
-                                <span class="text-3xl mb-3 block">👤</span>
-                                <p class="text-sm">Select a customer to view details</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Quick Stats -->
-                    <div class="card mt-6">
-                        <div class="p-6 border-b border-gray-200">
-                            <h3 class="font-bold mb-1">Credit Summary</h3>
-                        </div>
-                        <div class="p-6">
-                            <div class="space-y-4">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Total Customers:</span>
-                                    <span class="font-bold" id="totalCustomers">0</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Total Credit:</span>
-                                    <span class="font-bold text-red" id="totalCredit">$0</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">Overdue:</span>
-                                    <span class="font-bold text-red" id="overdueCredit">$0</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div id="customerList" class="space-y-3"></div>
+            </div>
+            <div class="card p-6" id="customerDetails">
+                <p class="text-slate-400 text-center py-12">Select a customer account to view ledger details.</p>
             </div>
         </div>
 
         <!-- Analytics -->
-        <div id="analytics" class="tab-content hidden fade-in">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                <!-- Revenue Chart -->
-                <div class="lg:col-span-2 card">
-                    <div class="p-6 border-b border-gray-200">
-                        <div class="flex justify-between items-center">
-                            <h2 class="text-xl font-bold">Revenue Overview</h2>
-                            <select id="revenuePeriod" class="input-field w-32">
-                                <option value="daily">Daily</option>
-                                <option value="weekly">Weekly</option>
-                                <option value="monthly">Monthly</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <div id="revenueChart" class="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-                            <div class="text-center text-gray-500">
-                                <span class="text-3xl mb-2 block">📈</span>
-                                <p>Revenue chart will appear here</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Top Products -->
-                <div class="card">
-                    <div class="p-6 border-b border-gray-200">
-                        <h2 class="text-xl font-bold">Top Products</h2>
-                    </div>
-                    <div class="p-6">
-                        <div id="topSellers" class="space-y-3">
-                            <div class="text-center py-8 text-gray-500">
-                                <span class="text-2xl mb-2 block">🏆</span>
-                                <p class="text-sm">No sales data available</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Financial Summary -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div class="card">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                <span class="text-2xl">💵</span>
-                            </div>
-                            <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded">+12%</span>
-                        </div>
-                        <p class="text-gray-600 text-sm mb-1">Cash in Hand</p>
-                        <p class="text-2xl font-bold text-green" id="cashInHand">$0</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                                <span class="text-2xl">⏰</span>
-                            </div>
-                            <span class="text-xs text-red-600 bg-red-100 px-2 py-1 rounded">Alert</span>
-                        </div>
-                        <p class="text-gray-600 text-sm mb-1">Pending Debt</p>
-                        <p class="text-2xl font-bold text-red" id="pendingDebtAnalytics">$0</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <span class="text-2xl">📊</span>
-                            </div>
-                            <span class="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">+8%</span>
-                        </div>
-                        <p class="text-gray-600 text-sm mb-1">Total Revenue</p>
-                        <p class="text-2xl font-bold text-blue" id="totalRevenue">$0</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Detailed Analytics -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Sales by Category -->
-                <div class="card">
-                    <div class="p-6 border-b border-gray-200">
-                        <h2 class="text-xl font-bold">Sales by Category</h2>
-                    </div>
-                    <div class="p-6">
-                        <div id="categorySales" class="space-y-3">
-                            <div class="text-center py-8 text-gray-500">
-                                <span class="text-2xl mb-2 block">📂</span>
-                                <p class="text-sm">Category data will appear here</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent Transactions -->
-                <div class="card">
-                    <div class="p-6 border-b border-gray-200">
-                        <h2 class="text-xl font-bold">Transaction History</h2>
-                    </div>
-                    <div class="p-6">
-                        <div id="transactionHistory" class="space-y-3 max-h-64 overflow-y-auto">
-                            <div class="text-center py-8 text-gray-500">
-                                <span class="text-2xl mb-2 block">📋</span>
-                                <p class="text-sm">No transactions yet</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div id="analytics" class="tab-content hidden space-y-6">
+            <div class="card p-6">
+                <h2 class="text-lg font-bold text-slate-200 mb-4">Revenue Trend (7-Day)</h2>
+                <canvas id="analyticsChartCanvas" width="600" height="180" class="w-full bg-slate-900/40 rounded-lg"></canvas>
             </div>
         </div>
     </main>
 
-    <!-- Modals -->
-    <div id="productModal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto fade-in">
-            <div class="p-6 border-b border-gray-200">
-                <h3 class="text-xl font-bold" id="productModalTitle">Add Product</h3>
-            </div>
-            <form id="productForm" class="p-6">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Product Name *</label>
-                        <input type="text" id="productName" placeholder="e.g., Rice, Sugar, Cooking Oil" 
-                               class="input-field" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Category *</label>
-                        <input type="text" id="productCategory" placeholder="e.g., Food, Electronics, Clothing" 
-                               class="input-field" required>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Quantity *</label>
-                            <input type="number" id="productQuantity" placeholder="0" min="0" 
-                                   class="input-field" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Min Stock *</label>
-                            <input type="number" id="productMinStock" placeholder="5" min="0" 
-                                   class="input-field" required>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Cost Price ($) *</label>
-                            <input type="number" id="productCost" placeholder="0.00" step="0.01" min="0" 
-                                   class="input-field" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Selling Price ($) *</label>
-                            <input type="number" id="productPrice" placeholder="0.00" step="0.01" min="0" 
-                                   class="input-field" required>
-                        </div>
-                    </div>
+    <!-- System Modals -->
+    <div id="productModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center z-50">
+        <div class="card w-full max-w-md p-6">
+            <h3 class="text-lg font-bold mb-4">Product Form</h3>
+            <form id="productForm" class="space-y-3">
+                <input type="text" id="productName" placeholder="Product Name" class="input-field" required>
+                <input type="text" id="productCategory" placeholder="Category" class="input-field" required>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="number" id="productQuantity" placeholder="Qty" class="input-field" required>
+                    <input type="number" id="productMinStock" placeholder="Min Stock Alert" class="input-field" required>
                 </div>
-                <div class="flex gap-3 mt-6">
-                    <button type="button" id="cancelProductBtn" class="btn btn-secondary flex-1">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn btn-primary flex-1">
-                        Save Product
-                    </button>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="number" step="0.01" id="productCost" placeholder="Cost Price ($)" class="input-field" required>
+                    <input type="number" step="0.01" id="productPrice" placeholder="Selling Price ($)" class="input-field" required>
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" id="cancelProductBtn" class="btn btn-secondary flex-1">Cancel</button>
+                    <button type="submit" class="btn btn-primary flex-1">Save Product</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="customerModal" class="fixed inset-0 modal-overlay hidden flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 fade-in">
-            <div class="p-6 border-b border-gray-200">
-                <h3 class="text-xl font-bold">Add Customer</h3>
-            </div>
-            <form id="customerForm" class="p-6">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Customer Name *</label>
-                        <input type="text" id="customerName" placeholder="e.g., John Doe" 
-                               class="input-field" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
-                        <input type="tel" id="customerPhone" placeholder="e.g., +1234567890" 
-                               class="input-field" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Email (Optional)</label>
-                        <input type="email" id="customerEmail" placeholder="e.g., john@example.com" 
-                               class="input-field">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Address (Optional)</label>
-                        <textarea id="customerAddress" placeholder="Customer address" 
-                                  class="input-field" rows="3"></textarea>
-                    </div>
-                </div>
-                <div class="flex gap-3 mt-6">
-                    <button type="button" id="cancelCustomerBtn" class="btn btn-secondary flex-1">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn btn-primary flex-1">
-                        Save Customer
-                    </button>
+    <div id="customerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center z-50">
+        <div class="card w-full max-w-md p-6">
+            <h3 class="text-lg font-bold mb-4">Customer Account</h3>
+            <form id="customerForm" class="space-y-3">
+                <input type="text" id="customerName" placeholder="Full Name" class="input-field" required>
+                <input type="tel" id="customerPhone" placeholder="Phone Number" class="input-field" required>
+                <input type="email" id="customerEmail" placeholder="Email (Optional)" class="input-field">
+                <textarea id="customerAddress" placeholder="Address" class="input-field"></textarea>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" id="cancelCustomerBtn" class="btn btn-secondary flex-1">Cancel</button>
+                    <button type="submit" class="btn btn-primary flex-1">Save Customer</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="hidden fixed top-4 right-4 z-50 success-toast">
-        <div class="flex items-center">
-            <span id="toastIcon">✅</span>
-            <span id="toastMessage" class="ml-2">Success!</span>
+    <div id="paymentModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center z-50">
+        <div class="card w-full max-w-sm p-6">
+            <h3 class="text-lg font-bold mb-4">Record Debt Payment</h3>
+            <form id="paymentModalForm" class="space-y-3">
+                <input type="hidden" id="paymentCustomerPhone">
+                <input type="number" step="0.01" id="paymentAmountInput" placeholder="Payment Amount ($)" class="input-field" required>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" id="cancelPaymentBtn" class="btn btn-secondary flex-1">Cancel</button>
+                    <button type="submit" class="btn btn-primary flex-1">Confirm</button>
+                </div>
+            </form>
         </div>
+    </div>
+
+    <div id="stockModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center z-50">
+        <div class="card w-full max-w-sm p-6">
+            <h3 class="text-lg font-bold mb-4">Quick Stock Adjustment</h3>
+            <form id="stockModalForm" class="space-y-3">
+                <input type="hidden" id="stockProductId">
+                <input type="number" id="stockQtyInput" placeholder="New Total Quantity" class="input-field" required>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" id="cancelStockBtn" class="btn btn-secondary flex-1">Cancel</button>
+                    <button type="submit" class="btn btn-primary flex-1">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-4 right-4 hidden bg-slate-800 border border-emerald-500/50 p-4 rounded-xl shadow-xl z-50 flex items-center space-x-2">
+        <span id="toastIcon"></span>
+        <span id="toastMessage" class="text-sm font-medium"></span>
     </div>
 
     <script src="app.js"></script>
