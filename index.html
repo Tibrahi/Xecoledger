@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xecoledger | Business Intelligence</title>
-    <!-- Official FontAwesome CDN Link -->
+    <title>Xecoledger | Integrated BI & Sales System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -30,13 +29,13 @@
                 <span class="font-bold text-lg tracking-wide">Xecoledger</span>
             </div>
             <div class="flex items-center space-x-3">
-                <span id="connectionStatus" class="text-xs text-slate-400 flex items-center"></span>
                 <button id="backupBtn" class="btn btn-secondary text-xs flex items-center gap-2">
-                    <i class="fa-solid fa-download"></i> Export Backup
+                    <i class="fa-solid fa-download"></i> Export Data
                 </button>
                 <button id="restoreBtn" class="btn btn-secondary text-xs flex items-center gap-2">
-                    <i class="fa-solid fa-upload"></i> Restore
+                    <i class="fa-solid fa-upload"></i> Import Data
                 </button>
+                <input type="file" id="restoreInput" class="hidden" accept=".json">
             </div>
         </div>
     </header>
@@ -97,7 +96,7 @@
 
             <div class="card p-6">
                 <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-clock-rotate-left"></i> Recent Transactions
+                    <i class="fa-solid fa-clock-rotate-left"></i> Recent Activity
                 </h2>
                 <div id="recentTransactions" class="space-y-3"></div>
             </div>
@@ -113,11 +112,6 @@
                     </div>
                     <div class="flex gap-2">
                         <select id="categoryFilter" class="input-field"><option value="">All Categories</option></select>
-                        <select id="stockFilter" class="input-field">
-                            <option value="">All Stock</option>
-                            <option value="low">Low Stock</option>
-                            <option value="available">In Stock</option>
-                        </select>
                         <button id="addProductBtn" class="btn btn-primary flex items-center gap-2">
                             <i class="fa-solid fa-plus"></i> Add Product
                         </button>
@@ -129,10 +123,10 @@
                             <tr>
                                 <th class="p-3">Name</th>
                                 <th class="p-3">Category</th>
-                                <th class="p-3">Quantity</th>
-                                <th class="p-3">Cost Price</th>
+                                <th class="p-3">Stock</th>
+                                <th class="p-3">Cost</th>
                                 <th class="p-3">Selling Price</th>
-                                <th class="p-3">Valuation</th>
+                                <th class="p-3">Total Value</th>
                                 <th class="p-3">Actions</th>
                             </tr>
                         </thead>
@@ -147,29 +141,31 @@
             <div class="lg:col-span-2 card p-6 flex flex-col justify-between">
                 <div>
                     <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-cart-shopping"></i> Active Cart (<span id="cartCount">0 items</span>)
+                        <i class="fa-solid fa-cart-shopping"></i> Active Order (<span id="cartCount">0 items</span>)
                     </h2>
                     <div id="cartItems" class="space-y-3 max-h-80 overflow-y-auto mb-6"></div>
                 </div>
                 <div class="border-t border-slate-700/50 pt-4 space-y-4">
                     <div class="flex justify-between items-center text-lg font-bold">
-                        <span>Total Payable:</span>
+                        <span>Total Amount:</span>
                         <span id="cartTotal" class="text-emerald-400">$0.00</span>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <select id="paymentMethod" class="input-field">
                             <option value="cash">Cash</option>
                             <option value="mobile">Mobile Money</option>
-                            <option value="credit">Credit Ledger</option>
+                            <option value="credit">Credit Ledger (Debt)</option>
                         </select>
-                        <select id="customerSelect" class="input-field"></select>
+                        <select id="customerSelect" class="input-field">
+                            <option value="">Select Customer</option>
+                        </select>
                     </div>
                     <div class="flex gap-3">
                         <button id="clearCartBtn" class="btn btn-secondary flex-1 flex items-center justify-center gap-2">
                             <i class="fa-solid fa-trash"></i> Clear Cart
                         </button>
                         <button id="completeSaleBtn" class="btn btn-primary flex-1 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-check"></i> Process Sale
+                            <i class="fa-solid fa-check"></i> Complete Sale
                         </button>
                     </div>
                 </div>
@@ -177,7 +173,7 @@
             <div class="card p-6">
                 <div class="relative mb-4">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500"></i>
-                    <input type="text" id="saleProductSearch" placeholder="Find item..." class="input-field pl-9">
+                    <input type="text" id="saleProductSearch" placeholder="Filter items..." class="input-field pl-9">
                 </div>
                 <div id="saleProductList" class="space-y-2 max-h-96 overflow-y-auto"></div>
             </div>
@@ -185,20 +181,25 @@
 
         <!-- Credit Ledger -->
         <div id="khatabook" class="tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 card p-6">
-                <div class="flex justify-between mb-4">
-                    <div class="relative w-64">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500"></i>
-                        <input type="text" id="customerSearch" placeholder="Search accounts..." class="input-field pl-9">
-                    </div>
-                    <button id="addCustomerBtn" class="btn btn-primary flex items-center gap-2">
-                        <i class="fa-solid fa-user-plus"></i> Add Customer
+            <div class="lg:col-span-1 card p-6 space-y-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-lg font-bold text-slate-200">Customers</h2>
+                    <button id="addCustomerBtn" class="btn btn-primary text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-user-plus"></i> New
                     </button>
                 </div>
-                <div id="customerList" class="space-y-3"></div>
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500"></i>
+                    <input type="text" id="customerSearch" placeholder="Search customer..." class="input-field pl-9">
+                </div>
+                <div id="customerList" class="space-y-2 max-h-96 overflow-y-auto"></div>
             </div>
-            <div class="card p-6" id="customerDetails">
-                <p class="text-slate-400 text-center py-12">Select a customer account to view ledger details.</p>
+            <div class="lg:col-span-2 card p-6" id="customerDetailsPanel">
+                <div id="customerDetailsPlaceholder" class="text-slate-400 text-center py-12">
+                    <i class="fa-solid fa-id-card text-4xl mb-3 text-slate-600"></i>
+                    <p>Select a customer from the left list to review their credit ledger and process debt settlements.</p>
+                </div>
+                <div id="customerDetailsContent" class="hidden space-y-6"></div>
             </div>
         </div>
 
@@ -206,11 +207,21 @@
         <div id="analytics" class="tab-content hidden space-y-6">
             <div class="card p-6">
                 <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-chart-line"></i> Revenue Overview
+                    <i class="fa-solid fa-chart-line"></i> Performance Metrics
                 </h2>
-                <div class="p-8 text-center border border-dashed border-slate-700 rounded-lg text-slate-400">
-                    <i class="fa-solid fa-chart-column text-3xl mb-2 text-slate-500"></i>
-                    <p>Sales trend visualizer dynamic rendering module initialized.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="p-4 bg-slate-900/50 rounded-lg border border-slate-800">
+                        <p class="text-xs text-slate-400">Total Profit Generated</p>
+                        <p id="totalProfitMetric" class="text-xl font-bold text-emerald-400">$0.00</p>
+                    </div>
+                    <div class="p-4 bg-slate-900/50 rounded-lg border border-slate-800">
+                        <p class="text-xs text-slate-400">Inventory Asset Valuation</p>
+                        <p id="inventoryValuationMetric" class="text-xl font-bold text-sky-400">$0.00</p>
+                    </div>
+                    <div class="p-4 bg-slate-900/50 rounded-lg border border-slate-800">
+                        <p class="text-xs text-slate-400">Completed Transactions</p>
+                        <p id="totalSalesCountMetric" class="text-xl font-bold text-purple-400">0</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -219,12 +230,13 @@
     <!-- Modals -->
     <div id="productModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center z-50">
         <div class="card w-full max-w-md p-6">
-            <h3 class="text-lg font-bold mb-4">Product Form</h3>
+            <h3 class="text-lg font-bold mb-4" id="productModalTitle">Add Product</h3>
             <form id="productForm" class="space-y-3">
+                <input type="hidden" id="productId">
                 <input type="text" id="productName" placeholder="Product Name" class="input-field" required>
                 <input type="text" id="productCategory" placeholder="Category" class="input-field" required>
                 <div class="grid grid-cols-2 gap-2">
-                    <input type="number" id="productQuantity" placeholder="Qty" class="input-field" required>
+                    <input type="number" id="productQuantity" placeholder="Quantity" class="input-field" required>
                     <input type="number" id="productMinStock" placeholder="Min Stock Alert" class="input-field" required>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
@@ -241,29 +253,14 @@
 
     <div id="customerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center z-50">
         <div class="card w-full max-w-md p-6">
-            <h3 class="text-lg font-bold mb-4">Customer Account</h3>
+            <h3 class="text-lg font-bold mb-4">Add Customer Account</h3>
             <form id="customerForm" class="space-y-3">
                 <input type="text" id="customerName" placeholder="Full Name" class="input-field" required>
                 <input type="tel" id="customerPhone" placeholder="Phone Number" class="input-field" required>
                 <input type="email" id="customerEmail" placeholder="Email (Optional)" class="input-field">
-                <textarea id="customerAddress" placeholder="Address" class="input-field"></textarea>
                 <div class="flex gap-2 pt-2">
                     <button type="button" id="cancelCustomerBtn" class="btn btn-secondary flex-1">Cancel</button>
-                    <button type="submit" class="btn btn-primary flex-1">Save Customer</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="stockModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center z-50">
-        <div class="card w-full max-w-sm p-6">
-            <h3 class="text-lg font-bold mb-4">Quick Stock Adjustment</h3>
-            <form id="stockModalForm" class="space-y-3">
-                <input type="hidden" id="stockProductId">
-                <input type="number" id="stockQtyInput" placeholder="New Total Quantity" class="input-field" required>
-                <div class="flex gap-2 pt-2">
-                    <button type="button" id="cancelStockBtn" class="btn btn-secondary flex-1">Cancel</button>
-                    <button type="submit" class="btn btn-primary flex-1">Update</button>
+                    <button type="submit" class="btn btn-primary flex-1">Create Account</button>
                 </div>
             </form>
         </div>
