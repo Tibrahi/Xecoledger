@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xecoledger | Professional Business Intelligence</title>
+    <title>Xecoledger | Business Intelligence</title>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #0f172a; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
@@ -22,24 +24,40 @@
     <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="w-9 h-9 bg-slate-950 border border-slate-700 rounded-lg flex items-center justify-center font-bold text-slate-100 text-xl">🖤</div>
+                <div class="w-9 h-9 bg-slate-950 border border-slate-700 rounded-lg flex items-center justify-center font-bold text-emerald-400 text-lg">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
                 <span class="font-bold text-lg tracking-wide">Xecoledger</span>
             </div>
             <div class="flex items-center space-x-3">
                 <span id="connectionStatus" class="text-xs text-slate-400 flex items-center"></span>
-                <button id="backupBtn" class="btn btn-secondary text-xs">⬛ Export Backup</button>
-                <button id="restoreBtn" class="btn btn-secondary text-xs">◼️ Restore</button>
+                <button id="backupBtn" class="btn btn-secondary text-xs flex items-center gap-2">
+                    <i class="fa-solid fa-download"></i> Export Backup
+                </button>
+                <button id="restoreBtn" class="btn btn-secondary text-xs flex items-center gap-2">
+                    <i class="fa-solid fa-upload"></i> Restore
+                </button>
             </div>
         </div>
     </header>
 
     <nav class="bg-slate-900/80 border-b border-slate-800">
         <div class="container mx-auto px-4 flex space-x-2 overflow-x-auto py-2">
-            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all active-nav" data-tab="dashboard">🖤 Dashboard</button>
-            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400" data-tab="inventory">⬛ Inventory</button>
-            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400" data-tab="sales">◼️ Sales Engine</button>
-            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400" data-tab="khatabook">⚫ Credit Ledger</button>
-            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400" data-tab="analytics">🖤 Analytics</button>
+            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all active-nav flex items-center gap-2" data-tab="dashboard">
+                <i class="fa-solid fa-house"></i> Dashboard
+            </button>
+            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 flex items-center gap-2" data-tab="inventory">
+                <i class="fa-solid fa-boxes-stacked"></i> Inventory
+            </button>
+            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 flex items-center gap-2" data-tab="sales">
+                <i class="fa-solid fa-cart-shopping"></i> Sales Engine
+            </button>
+            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 flex items-center gap-2" data-tab="khatabook">
+                <i class="fa-solid fa-book"></i> Credit Ledger
+            </button>
+            <button class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 flex items-center gap-2" data-tab="analytics">
+                <i class="fa-solid fa-chart-pie"></i> Analytics
+            </button>
         </div>
     </nav>
 
@@ -48,25 +66,39 @@
         <div id="dashboard" class="tab-content space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="card p-5">
-                    <p class="text-xs text-slate-400 font-medium">TODAY'S REVENUE</p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs text-slate-400 font-medium">TODAY'S REVENUE</p>
+                        <i class="fa-solid fa-dollar-sign text-emerald-400"></i>
+                    </div>
                     <p id="todaySales" class="text-2xl font-bold text-emerald-400 mt-1">$0.00</p>
                 </div>
                 <div class="card p-5">
-                    <p class="text-xs text-slate-400 font-medium">TOTAL PRODUCTS</p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs text-slate-400 font-medium">TOTAL PRODUCTS</p>
+                        <i class="fa-solid fa-box text-slate-400"></i>
+                    </div>
                     <p id="totalProducts" class="text-2xl font-bold text-slate-200 mt-1">0</p>
                 </div>
                 <div class="card p-5">
-                    <p class="text-xs text-slate-400 font-medium">OUTSTANDING DEBT</p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs text-slate-400 font-medium">OUTSTANDING DEBT</p>
+                        <i class="fa-solid fa-hand-holding-dollar text-rose-400"></i>
+                    </div>
                     <p id="pendingDebt" class="text-2xl font-bold text-rose-400 mt-1">$0.00</p>
                 </div>
                 <div class="card p-5">
-                    <p class="text-xs text-slate-400 font-medium">LOW STOCK ALERTS</p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs text-slate-400 font-medium">LOW STOCK ALERTS</p>
+                        <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+                    </div>
                     <p id="lowStockCount" class="text-2xl font-bold text-amber-400 mt-1">0</p>
                 </div>
             </div>
 
             <div class="card p-6">
-                <h2 class="text-lg font-bold text-slate-200 mb-4">Recent Transactions</h2>
+                <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Recent Transactions
+                </h2>
                 <div id="recentTransactions" class="space-y-3"></div>
             </div>
         </div>
@@ -75,7 +107,10 @@
         <div id="inventory" class="tab-content hidden space-y-6">
             <div class="card p-6">
                 <div class="flex flex-col md:flex-row justify-between gap-4 mb-6">
-                    <input type="text" id="productSearch" placeholder="⬛ Search catalog..." class="input-field md:w-64">
+                    <div class="relative md:w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500"></i>
+                        <input type="text" id="productSearch" placeholder="Search catalog..." class="input-field pl-9">
+                    </div>
                     <div class="flex gap-2">
                         <select id="categoryFilter" class="input-field"><option value="">All Categories</option></select>
                         <select id="stockFilter" class="input-field">
@@ -83,7 +118,9 @@
                             <option value="low">Low Stock</option>
                             <option value="available">In Stock</option>
                         </select>
-                        <button id="addProductBtn" class="btn btn-primary">+ Add Product</button>
+                        <button id="addProductBtn" class="btn btn-primary flex items-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Add Product
+                        </button>
                     </div>
                 </div>
                 <div class="overflow-x-auto">
@@ -109,7 +146,9 @@
         <div id="sales" class="tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 card p-6 flex flex-col justify-between">
                 <div>
-                    <h2 class="text-lg font-bold text-slate-200 mb-4">Active Cart (<span id="cartCount">0 items</span>)</h2>
+                    <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-cart-shopping"></i> Active Cart (<span id="cartCount">0 items</span>)
+                    </h2>
                     <div id="cartItems" class="space-y-3 max-h-80 overflow-y-auto mb-6"></div>
                 </div>
                 <div class="border-t border-slate-700/50 pt-4 space-y-4">
@@ -119,20 +158,27 @@
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <select id="paymentMethod" class="input-field">
-                            <option value="cash">🖤 Cash</option>
-                            <option value="mobile">⬛ Mobile Money</option>
-                            <option value="credit">◼️ Credit Ledger</option>
+                            <option value="cash">Cash</option>
+                            <option value="mobile">Mobile Money</option>
+                            <option value="credit">Credit Ledger</option>
                         </select>
                         <select id="customerSelect" class="input-field"></select>
                     </div>
                     <div class="flex gap-3">
-                        <button id="clearCartBtn" class="btn btn-secondary flex-1">Clear Cart</button>
-                        <button id="completeSaleBtn" class="btn btn-primary flex-1">Process Sale</button>
+                        <button id="clearCartBtn" class="btn btn-secondary flex-1 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-trash"></i> Clear Cart
+                        </button>
+                        <button id="completeSaleBtn" class="btn btn-primary flex-1 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-check"></i> Process Sale
+                        </button>
                     </div>
                 </div>
             </div>
             <div class="card p-6">
-                <input type="text" id="saleProductSearch" placeholder="⬛ Find item..." class="input-field mb-4">
+                <div class="relative mb-4">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500"></i>
+                    <input type="text" id="saleProductSearch" placeholder="Find item..." class="input-field pl-9">
+                </div>
                 <div id="saleProductList" class="space-y-2 max-h-96 overflow-y-auto"></div>
             </div>
         </div>
@@ -141,8 +187,13 @@
         <div id="khatabook" class="tab-content hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 card p-6">
                 <div class="flex justify-between mb-4">
-                    <input type="text" id="customerSearch" placeholder="Search accounts..." class="input-field w-64">
-                    <button id="addCustomerBtn" class="btn btn-primary">+ Add Customer</button>
+                    <div class="relative w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500"></i>
+                        <input type="text" id="customerSearch" placeholder="Search accounts..." class="input-field pl-9">
+                    </div>
+                    <button id="addCustomerBtn" class="btn btn-primary flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i> Add Customer
+                    </button>
                 </div>
                 <div id="customerList" class="space-y-3"></div>
             </div>
@@ -154,13 +205,15 @@
         <!-- Analytics -->
         <div id="analytics" class="tab-content hidden space-y-6">
             <div class="card p-6">
-                <h2 class="text-lg font-bold text-slate-200 mb-4">Revenue Trend (7-Day)</h2>
+                <h2 class="text-lg font-bold text-slate-200 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line"></i> Revenue Trend (7-Day)
+                </h2>
                 <canvas id="analyticsChartCanvas" width="600" height="180" class="w-full bg-slate-900/40 rounded-lg"></canvas>
             </div>
         </div>
     </main>
 
-    <!-- System Modals -->
+    <!-- Modals -->
     <div id="productModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center z-50">
         <div class="card w-full max-w-md p-6">
             <h3 class="text-lg font-bold mb-4">Product Form</h3>
@@ -227,7 +280,7 @@
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-4 right-4 hidden bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-xl z-50 flex items-center space-x-2">
+    <div id="toast" class="fixed bottom-4 right-4 hidden bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-xl z-50 flex items-center space-x-3">
         <span id="toastIcon"></span>
         <span id="toastMessage" class="text-sm font-medium"></span>
     </div>
